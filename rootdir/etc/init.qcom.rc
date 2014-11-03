@@ -642,6 +642,7 @@ on property:sys.boot_completed=1
 
     # Start to configure the CPU governors
     write /sys/module/msm_thermal/core_control/enabled 0
+    write /sys/devices/system/cpu/cpu0/online 1
     write /sys/devices/system/cpu/cpu1/online 1
     write /sys/devices/system/cpu/cpu2/online 1
     write /sys/devices/system/cpu/cpu3/online 1
@@ -671,12 +672,18 @@ on property:sys.boot_completed=1
     write /sys/devices/system/cpu/cpufreq/interactive/min_sample_time 40000
     write /sys/devices/system/cpu/cpufreq/interactive/sampling_down_factor 100000
     write /sys/devices/system/cpu/cpufreq/interactive/target_loads "85 1500000:90 1800000:70"
+    
+    # Intelliactive
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor intelliactive
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor intelliactive
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor intelliactive
+    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor intelliactive
 
     # cpufreq
-    write /devices/system/cpu/cpu0/cpufreq/scaling_max_freq 2265600
-    write /devices/system/cpu/cpu1/cpufreq/scaling_max_freq 2265600
-    write /devices/system/cpu/cpu2/cpufreq/scaling_max_freq 2265600
-    write /devices/system/cpu/cpu3/cpufreq/scaling_max_freq 2265600
+    write /devices/system/cpu/cpu0/cpufreq/scaling_max_freq 2457600
+    write /devices/system/cpu/cpu1/cpufreq/scaling_max_freq 2457600
+    write /devices/system/cpu/cpu2/cpufreq/scaling_max_freq 2457600
+    write /devices/system/cpu/cpu3/cpufreq/scaling_max_freq 2457600
     write /devices/system/cpu/cpu0/cpufreq/scaling_min_freq 300000
     write /devices/system/cpu/cpu1/cpufreq/scaling_min_freq 300000
     write /devices/system/cpu/cpu2/cpufreq/scaling_min_freq 300000
@@ -690,6 +697,7 @@ on property:sys.boot_completed=1
     chown root system /sys/devices/system/cpu/cpu1/online
     chown root system /sys/devices/system/cpu/cpu2/online
     chown root system /sys/devices/system/cpu/cpu3/online
+    chmod 664 /sys/devices/system/cpu/cpu0/online
     chmod 664 /sys/devices/system/cpu/cpu1/online
     chmod 664 /sys/devices/system/cpu/cpu2/online
     chmod 664 /sys/devices/system/cpu/cpu3/online
