@@ -47,7 +47,7 @@ TARGET_RELEASE_CFLAGS := -Ofast \
 
 CLANG_CONFIG_EXTRA_CFLAGS := \
   -Ofast \
-  -Qunused-arguments -Wno-unknown-warning-option			
+  -Qunused-arguments -Wno-unknown-warning-option
 
 # Audio
 BOARD_HAVE_NEW_QCOM_CSDCLIENT := true
