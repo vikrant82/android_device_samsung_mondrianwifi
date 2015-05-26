@@ -708,7 +708,7 @@ on property:sys.boot_completed=1
     write /dev/cpuctl/apps/cpu.notify_on_migrate 1
 
     # Configure the GPU
-    write 200000000 /sys/devices/fdb00000.qcom,kgsl-3d0/kgsl/kgsl-3d0/devfreq/min_freq
+    write 27000000 /sys/devices/fdb00000.qcom,kgsl-3d0/kgsl/kgsl-3d0/devfreq/min_freq
 
     # Post boot services
     start mpdecision
