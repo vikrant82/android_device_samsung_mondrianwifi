@@ -28,6 +28,9 @@
 import init.qcom.usb.rc
 import init.target.rc
 
+stop mpdecision
+echo "Kx Kernel Boot Script Started" | tee /dev/kmsg
+
 on early-init
     mount debugfs debugfs /sys/kernel/debug
     write /sys/block/mmcblk0/queue/read_ahead_kb 1024
@@ -607,8 +610,7 @@ service wifi-crda /system/bin/sh /system/etc/init.crda.sh
    oneshot
 
 on property:sys.boot_completed=1
-    write /sys/block/mmcblk0/queue/scheduler bfq
-
+    
     # Configure the hardware properly
     write /sys/module/lpm_resources/enable_low_power/l2 2
     write /sys/module/lpm_resources/enable_low_power/pxo 1
@@ -661,10 +663,10 @@ on property:sys.boot_completed=1
 
     # Interactive governor
 
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor alucard
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor alucard
-    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor alucard
-    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor alucard
+    #write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor alucard
+    #write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor alucard
+    #write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor alucard
+    #write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor alucard
 
     #write /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay "20000 1400000:40000 1700000:20000"
     #write /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load 90
@@ -676,19 +678,22 @@ on property:sys.boot_completed=1
     #write /sys/devices/system/cpu/cpufreq/interactive/max_freq_hysteresis 100000
     #write /sys/devices/system/cpu/cpufreq/interactive/timer_slack 30000
     #write /dev/cpuctl/apps/cpu.notify_on_migrate 1
-
-    # CPU Boost driver
-
-    # write /sys/module/cpu_boost/parameters/boost_ms 20
-    write /sys/module/cpu_boost/parameters/sync_threshold 1267200
-    write /sys/module/cpu_boost/parameters/input_boost_freq 1190400
-    write /sys/module/cpu_boost/parameters/input_boost_ms 200
+    
+    ############################
+    # CPU-Boost Settings
+    #
+    echo 20 > /sys/module/cpu_boost/parameters/boost_ms
+    echo 200 > /sys/module/cpu_boost/parameters/input_boost_ms
+    echo 0:1190400 1:1190400 2:1190400 3:1190400 > /sys/module/cpu_boost/parameters/input_boost_freq
+    echo 1420800 > /sys/module/cpu_boost/parameters/sync_threshold
+    echo 1 > /sys/module/cpu_boost/parameters/hotplug_boost
+    echo 1 > /sys/module/cpu_boost/parameters/wakeup_boost
 
     # cpufreq
-    write /devices/system/cpu/cpu0/cpufreq/scaling_max_freq 2457600
-    write /devices/system/cpu/cpu1/cpufreq/scaling_max_freq 2457600
-    write /devices/system/cpu/cpu2/cpufreq/scaling_max_freq 2457600
-    write /devices/system/cpu/cpu3/cpufreq/scaling_max_freq 2457600
+    write /devices/system/cpu/cpu0/cpufreq/scaling_max_freq 2265600
+    write /devices/system/cpu/cpu1/cpufreq/scaling_max_freq 2265600
+    write /devices/system/cpu/cpu2/cpufreq/scaling_max_freq 2265600
+    write /devices/system/cpu/cpu3/cpufreq/scaling_max_freq 2265600
     write /devices/system/cpu/cpu0/cpufreq/scaling_min_freq 268800
     write /devices/system/cpu/cpu1/cpufreq/scaling_min_freq 268800
     write /devices/system/cpu/cpu2/cpufreq/scaling_min_freq 268800
@@ -712,6 +717,86 @@ on property:sys.boot_completed=1
 
     # Post boot services
     # start mpdecision
+    stop mpdecision
+    
+    # IO tweaks
+    echo 200 > /proc/sys/vm/dirty_expire_centisecs
+    echo 40 > /proc/sys/vm/dirty_ratio
+    echo 5 > /proc/sys/vm/dirty_background_ratio
+    echo 10 > /proc/sys/vm/swappiness
+    echo 30 > /proc/sys/vm/vfs_cache_pressure
+    echo 1 > /proc/sys/vm/laptop_mode
+
+
+    echo 1 > /sys/module/workqueue/parameters/power_efficient
+
+
+    ############################
+    # MSM Limiter
+    #
+    echo 268800 > /sys/kernel/msm_limiter/suspend_min_freq_0
+    echo 268800 > /sys/kernel/msm_limiter/suspend_min_freq_1
+    echo 268800 > /sys/kernel/msm_limiter/suspend_min_freq_2
+    echo 268800 > /sys/kernel/msm_limiter/suspend_min_freq_3
+    echo 2265600 > /sys/kernel/msm_limiter/resume_max_freq_0
+    echo 2265600 > /sys/kernel/msm_limiter/resume_max_freq_1
+    echo 2265600 > /sys/kernel/msm_limiter/resume_max_freq_2
+    echo 2265600 > /sys/kernel/msm_limiter/resume_max_freq_3
+    echo 1036800 > /sys/kernel/msm_limiter/suspend_max_freq
+
+
+    ############################
+    # Scheduler and Read Ahead
+    #
+    echo zen > /sys/block/mmcblk0/queue/scheduler
+    echo 1024 > /sys/block/mmcblk0/bdi/read_ahead_kb
+
+    ############################
+    # Governor Tunings
+    #
+    echo ondemand > /sys/kernel/msm_limiter/scaling_governor_0
+    echo 95 > /sys/devices/system/cpu/cpufreq/ondemand/up_threshold
+    echo 50000 > /sys/devices/system/cpu/cpufreq/ondemand/sampling_rate
+    echo 1 > /sys/devices/system/cpu/cpufreq/ondemand/io_is_busy
+    echo 4 > /sys/devices/system/cpu/cpufreq/ondemand/sampling_down_factor
+    echo 10 > /sys/devices/system/cpu/cpufreq/ondemand/down_differential
+    echo 75 > /sys/devices/system/cpu/cpufreq/ondemand/up_threshold_multi_core
+    echo 3 > /sys/devices/system/cpu/cpufreq/ondemand/down_differential_multi_core
+    echo 960000 > /sys/devices/system/cpu/cpufreq/ondemand/optimal_freq
+    echo 960000 > /sys/devices/system/cpu/cpufreq/ondemand/sync_freq
+    echo 85 > /sys/devices/system/cpu/cpufreq/ondemand/up_threshold_any_cpu_load
+
+    echo interactive > /sys/kernel/msm_limiter/scaling_governor_0
+    echo 20000 1400000:40000 1700000:20000 > /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay
+    echo 90 > /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load
+    echo 1190400 > /sys/devices/system/cpu/cpufreq/interactive/hispeed_freq
+    echo 1 > /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
+    echo 85 1500000:90 1800000:70 > /sys/devices/system/cpu/cpufreq/interactive/target_loads
+    echo 40000 > /sys/devices/system/cpu/cpufreq/interactive/min_sample_time
+    echo 30000 > /sys/devices/system/cpu/cpufreq/interactive/timer_rate
+    echo 100000 > /sys/devices/system/cpu/cpufreq/interactive/max_freq_hysteresis
+    echo 30000 > /sys/devices/system/cpu/cpufreq/interactive/timer_slack
+
+    echo impulse > /sys/kernel/msm_limiter/scaling_governor_0
+    echo 20000 1400000:40000 1700000:20000 > /sys/devices/system/cpu/cpufreq/impulse/above_hispeed_delay
+    echo 95 > /sys/devices/system/cpu/cpufreq/impulse/go_hispeed_load
+    echo 1190400 > /sys/devices/system/cpu/cpufreq/impulse/hispeed_freq
+    echo 1 > /sys/devices/system/cpu/cpufreq/impulse/io_is_busy
+    echo 85 1500000:90 1800000:70 > /sys/devices/system/cpu/cpufreq/impulse/target_loads
+    echo 40000 > /sys/devices/system/cpu/cpufreq/impulse/min_sample_time
+    echo 30000 > /sys/devices/system/cpu/cpufreq/impulse/timer_rate
+    echo 100000 > /sys/devices/system/cpu/cpufreq/impulse/max_freq_hysteresis
+    echo 30000 > /sys/devices/system/cpu/cpufreq/impulse/timer_slack
+    echo 1 > /sys/devices/system/cpu/cpufreq/impulse/powersave_bias
+
+    echo smartmax > /sys/kernel/msm_limiter/scaling_governor_0
+    echo smartmax > /sys/kernel/msm_limiter/scaling_governor_1
+    echo smartmax > /sys/kernel/msm_limiter/scaling_governor_2
+    echo smartmax > /sys/kernel/msm_limiter/scaling_governor_3
+    echo 499200 > /sys/devices/system/cpu/cpufreq/smartmax/suspend_ideal_freq
+    echo 1267200 > /sys/devices/system/cpu/cpufreq/smartmax/touch_poke_freq
+    echo 146400 > /sys/devices/system/cpu/cpufreq/smartmax/awake_ideal_freq
+    echo 1267200 > /sys/devices/system/cpu/cpufreq/smartmax/boost_freq
 
 service hdmid /system/bin/hdmid
     class late_start
