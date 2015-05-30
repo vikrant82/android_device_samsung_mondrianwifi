@@ -36,6 +36,14 @@ on early-init
     write /sys/block/mmcblk0/queue/read_ahead_kb 1024
     write /sys/block/mmcblk1/queue/read_ahead_kb 1024
     write /sys/block/mmcblk0/queue/scheduler noop
+    write /devices/system/cpu/cpu0/cpufreq/scaling_max_freq 2265600
+    write /devices/system/cpu/cpu1/cpufreq/scaling_max_freq 2265600
+    write /devices/system/cpu/cpu2/cpufreq/scaling_max_freq 2265600
+    write /devices/system/cpu/cpu3/cpufreq/scaling_max_freq 2265600
+    write /devices/system/cpu/cpu0/cpufreq/scaling_min_freq 268800
+    write /devices/system/cpu/cpu1/cpufreq/scaling_min_freq 268800
+    write /devices/system/cpu/cpu2/cpufreq/scaling_min_freq 268800
+    write /devices/system/cpu/cpu3/cpufreq/scaling_min_freq 268800    
 
 on init
     # Set permissions for persist partition
@@ -44,6 +52,14 @@ on init
     mkdir /mnt/shell/container 0700 system system
     mkdir /storage 0550 system sdcard_r
     mkdir /storage/emulated 0555 root root
+    write /devices/system/cpu/cpu0/cpufreq/scaling_max_freq 2265600
+    write /devices/system/cpu/cpu1/cpufreq/scaling_max_freq 2265600
+    write /devices/system/cpu/cpu2/cpufreq/scaling_max_freq 2265600
+    write /devices/system/cpu/cpu3/cpufreq/scaling_max_freq 2265600
+    write /devices/system/cpu/cpu0/cpufreq/scaling_min_freq 268800
+    write /devices/system/cpu/cpu1/cpufreq/scaling_min_freq 268800
+    write /devices/system/cpu/cpu2/cpufreq/scaling_min_freq 268800
+    write /devices/system/cpu/cpu3/cpufreq/scaling_min_freq 268800    
 
     #External storage directories
     mkdir /mnt/media_rw/sdcard1 0700 media_rw media_rw
