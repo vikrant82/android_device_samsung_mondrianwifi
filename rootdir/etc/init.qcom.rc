@@ -36,6 +36,16 @@ on early-init
     write /sys/block/mmcblk0/queue/read_ahead_kb 1024
     write /sys/block/mmcblk1/queue/read_ahead_kb 1024
     write /sys/block/mmcblk0/queue/scheduler noop 
+    
+        write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 2265600
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 2265600
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 2265600
+    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq 2265600
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 268800
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 268800
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 268800
+    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq 268800
+
 
 on init
     # Set permissions for persist partition
@@ -179,15 +189,6 @@ on boot
     # connections on high-throughput links get dropped when
     # an ack packet comes out of order
     write /proc/sys/net/netfilter/nf_conntrack_tcp_be_liberal 1
-    
-    write /devices/system/cpu/cpu0/cpufreq/scaling_max_freq 2265600
-    write /devices/system/cpu/cpu1/cpufreq/scaling_max_freq 2265600
-    write /devices/system/cpu/cpu2/cpufreq/scaling_max_freq 2265600
-    write /devices/system/cpu/cpu3/cpufreq/scaling_max_freq 2265600
-    write /devices/system/cpu/cpu0/cpufreq/scaling_min_freq 268800
-    write /devices/system/cpu/cpu1/cpufreq/scaling_min_freq 268800
-    write /devices/system/cpu/cpu2/cpufreq/scaling_min_freq 268800
-    write /devices/system/cpu/cpu3/cpufreq/scaling_min_freq 268800
 
 # msm specific files that need to be created on /data
 on post-fs-data
@@ -709,14 +710,23 @@ on property:sys.boot_completed=1
     write /sys/module/cpu_boost/parameters/wakeup_boost
 
     # cpufreq
-    write /devices/system/cpu/cpu0/cpufreq/scaling_max_freq 2265600
-    write /devices/system/cpu/cpu1/cpufreq/scaling_max_freq 2265600
-    write /devices/system/cpu/cpu2/cpufreq/scaling_max_freq 2265600
-    write /devices/system/cpu/cpu3/cpufreq/scaling_max_freq 2265600
-    write /devices/system/cpu/cpu0/cpufreq/scaling_min_freq 268800
-    write /devices/system/cpu/cpu1/cpufreq/scaling_min_freq 268800
-    write /devices/system/cpu/cpu2/cpufreq/scaling_min_freq 268800
-    write /devices/system/cpu/cpu3/cpufreq/scaling_min_freq 268800
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 2265600
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 2265600
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 2265600
+    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq 2265600
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 268800
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 268800
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 268800
+    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq 268800
+    write /sys/kernel/msm_limiter/suspend_min_freq_0 268800
+    write /sys/kernel/msm_limiter/suspend_min_freq_1 268800
+    write /sys/kernel/msm_limiter/suspend_min_freq_2 268800
+    write /sys/kernel/msm_limiter/suspend_min_freq_3 268800
+    write /sys/kernel/msm_limiter/resume_max_freq_0 2265600
+    write /sys/kernel/msm_limiter/resume_max_freq_1 2265600
+    write /sys/kernel/msm_limiter/resume_max_freq_2 2265600
+    write /sys/kernel/msm_limiter/resume_max_freq_3 2265600
+    write /sys/kernel/msm_limiter/suspend_max_freq 1036800
 
     # End of governor configuration
     #write /sys/module/msm_thermal/core_control/enabled 1
@@ -752,20 +762,6 @@ on property:sys.boot_completed=1
 
 
     ############################
-    # MSM Limiter
-    #
-    write /sys/kernel/msm_limiter/suspend_min_freq_0 268800
-    write /sys/kernel/msm_limiter/suspend_min_freq_1 268800
-    write /sys/kernel/msm_limiter/suspend_min_freq_2 268800
-    write /sys/kernel/msm_limiter/suspend_min_freq_3 268800
-    write /sys/kernel/msm_limiter/resume_max_freq_0 2265600
-    write /sys/kernel/msm_limiter/resume_max_freq_1 2265600
-    write /sys/kernel/msm_limiter/resume_max_freq_2 2265600
-    write /sys/kernel/msm_limiter/resume_max_freq_3 2265600
-    write /sys/kernel/msm_limiter/suspend_max_freq 1036800
-
-
-    ############################
     # Scheduler and Read Ahead
     #
     write /sys/block/mmcblk0/queue/scheduler zen
@@ -774,7 +770,6 @@ on property:sys.boot_completed=1
     ############################
     # Governor Tunings
     #
-
     write /sys/kernel/msm_limiter/scaling_governor_0 smartmax
     write /sys/kernel/msm_limiter/scaling_governor_1 smartmax
     write /sys/kernel/msm_limiter/scaling_governor_2 smartmax
@@ -786,8 +781,19 @@ on property:sys.boot_completed=1
     write /sys/devices/system/cpu/cpufreq/smartmax/suspend_ideal_freq 499200
     write /sys/devices/system/cpu/cpufreq/smartmax/touch_poke_freq 1267200
     write /sys/devices/system/cpu/cpufreq/smartmax/awake_ideal_freq 268800
-    write /sys/devices/system/cpu/cpufreq/smartmax/boost_freq 1267200 
+    write /sys/devices/system/cpu/cpufreq/smartmax/boost_freq 1267200
+    
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor interactive
+    write /sys/kernel/msm_limiter/scaling_governor_0 interactive
+    write /sys/kernel/msm_limiter/scaling_governor_1 interactive
+    write /sys/kernel/msm_limiter/scaling_governor_2 interactive
+    write /sys/kernel/msm_limiter/scaling_governor_3 interactive
 
+    
+    
 service hdmid /system/bin/hdmid
     class late_start
     socket hdmid stream 0660 root system graphics
