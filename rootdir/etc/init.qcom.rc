@@ -730,8 +730,9 @@ on property:sys.boot_completed=1
     chmod 664 /sys/devices/system/cpu/cpu2/online
     chmod 664 /sys/devices/system/cpu/cpu3/online
     write /dev/cpuctl/apps/cpu.notify_on_migrate 1
-    chown root system /sys/class/thermal/thermal_zone0/temp
-    chmod 220 /sys/class/thermal/thermal_zone0/temp
+    chown root root /sys/class/thermal/thermal_zone0/temp
+    chmod 664 /sys/class/thermal/thermal_zone0/temp
+    write /sys/fs/selinux/enforce 0
     
 
     # Configure the GPU
