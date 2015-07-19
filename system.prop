@@ -23,3 +23,9 @@ ro.radio.noril=yes
 # CWMR Options
 ro.cwm.forbid_format=/boot,/firmware,/firmware-modem
 ro.cwm.forbid_mount=/boot
+
+# Viper
+lpa.decode=false
+lpa.releaselock=false
+lpa.use-stagefright=false
+tunnel.decode=false
