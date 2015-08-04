@@ -33,6 +33,23 @@ BOARD_KERNEL_SEPARATED_DT := true
 BOARD_MKBOOTIMG_ARGS := --ramdisk_offset 0x02900000 --tags_offset 0x02700000
 TARGET_KERNEL_CONFIG := cyanogenmod_mondrian_defconfig
 TARGET_KERNEL_SOURCE := kernel/samsung/mondrianwifi
+TARGET_arm_CFLAGS := -Ofast -DNDEBUG -fstrict-aliasing -funsafe-loop-optimizations -fsection-anchors -fivopts -ftree-loop-im -ftree-loop-ivcanon -ffunction-sections -fdata-sections -funswitch-loops -frename-registers -fomit-frame-pointer -fgcse-sm -fgcse-las -fweb -ftracer -Wno-error=unused-parameter -Wno-error=unused-but-set-variable -Wno-error=maybe-uninitialized -Wno-unused-function
+TARGET_thumb_CFLAGS := -mthumb -Ofast -DNDEBUG -funsafe-loop-optimizations -fsection-anchors -fivopts -ftree-loop-im -ftree-loop-ivcanon -ffunction-sections -fdata-sections -funswitch-loops -frename-registers -frerun-cse-after-loop -fomit-frame-pointer -fno-strict-aliasing -fgcse-sm -fgcse-las -fweb -ftracer -Wno-error=unused-parameter -Wno-error=unused-but-set-variable -Wno-error=maybe-uninitialized -Wno-unused-function
+TARGET_GLOBAL_CPPFLAGS = -fvisibility-inlines-hidden -Ofast -DNDEBUG -funsafe-loop-optimizations -fsection-anchors -fivopts -ftree-loop-im -ftree-loop-ivcanon -ffunction-sections -fdata-sections -funswitch-loops -frename-registers -fomit-frame-pointer -fgcse-sm -fgcse-las -fweb -ftracer
+
+# More flags/options can be added here
+TARGET_RELEASE_CFLAGS := -Ofast \
+			-DNDEBUG \
+			-g \
+			-fno-strict-aliasing -funsafe-loop-optimizations -fsection-anchors -fivopts -ftree-loop-im -ftree-loop-ivcanon -ffunction-sections -fdata-sections -funswitch-loops -frename-registers -fomit-frame-pointer -fgcse-sm -fgcse-las -fweb -ftracer \
+			-Wstrict-aliasing=2 \
+			-fgcse-after-reload \
+			-frerun-cse-after-loop \
+			-frename-registers
+
+CLANG_CONFIG_EXTRA_CFLAGS := \
+  -Ofast \
+  -Qunused-arguments -Wno-unknown-warning-option
 
 # Audio
 BOARD_HAVE_NEW_QCOM_CSDCLIENT := true
